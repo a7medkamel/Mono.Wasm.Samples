@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="connect-src * 'unsafe-inline';">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <style>
+        table {
+            border: 2px solid black;
+        }
+
+        input {
+            width: 300px;
+        }
+
+        select {
+            width: 300px;
+        }
+
+        textarea {
+            width: 513px;
+            border: 2px solid black;
+        }
+
+        #btnConnect {
+            width: 100px;
+        }
+
+        #btnDisconnect {
+            width: 100px;
+        }
+
+        #btnSend {
+            width: 100px;
+        }
+    </style>
+    <script type="text/javascript" src="runtime.js"></script>
+    <script defer src="mono.js"></script>
+
+</head>
+    <body>
+        <div id="feedback-body" class="container-fluid">
+            <p id="loading"><i class="fa fa-refresh fa-spin" style="font-size:14px;margin-right:0.5em;"></i> Loading...</p>
+        </div>        
+        <div id="main-body" style="visibility: hidden">
+            <h1>WebSocket Client</h1>
+            <!-- WebSocket Connection Parameters Table -->
+            <table>
+                <tr>
+                    <td width="200px">WS Protocol</td>
+                    <td>
+                        <select id="protocol">
+                            <option value="ws" selected="selected">ws</option>
+                            <option value="wss">wss</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WS Hostname</td>
+                    <td><input type="text" id="hostname"/></td>
+                </tr>
+                <tr>
+                    <td>WS Port</td>
+                    <td><input type="text" id="port"/></td>
+                </tr>
+                <tr>
+                    <td>WS Endpoint</td>
+                    <td><input type="text" id="endpoint"/></td>
+                </tr>
+                <tr>
+                    <td>WS Protocols</td>
+                    <td><input type="text" id="protocols"/></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input id="btnConnect"    type="button" value="Connect"    onclick="App.onConnectClick()">&nbsp;&nbsp;
+                        <input id="btnDisconnect" type="button" value="Disconnect" onclick="App.onDisconnectClick()" disabled="disabled">
+                    </td>
+                </tr>
+            </table><br/>
+            <!-- Send Message Table -->
+            <table>
+                <tr>
+                    <td width="200px">Message</td>
+                    <td><input type="text" id="message"/></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input id="btnSendText" type="button" value="Send Message Text" disabled="disabled" onclick="App.onSendTextClick()">&nbsp;&nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input id="btnSendBinary" type="button" value="Send Message Binary" disabled="disabled" onclick="App.onSendBinaryClick()">
+                    </td>
+                </tr>
+            </table><br/>
+            <textarea id="incomingMsgOutput" rows="10" cols="20" disabled="disabled"></textarea>
+        </div>
+
+        <script type="text/javascript">
+            var requests = 0;
+    
+             var App = {
+    
+                init: function () {
+                    var feedback = document.getElementById("feedback-body");
+                    if (feedback) {
+                        feedback.parentElement.removeChild(feedback);
+                    }
+                    document.getElementById("main-body").style.visibility = null;
+                    BINDING.call_static_method("[WasmClientWebSocketTest]WasmClientWebSocketTest.Client:Main", [document.getElementById("incomingMsgOutput")]);
+                    console.log("Total Memory Exit WASM: " + TOTAL_MEMORY);
+                },
+                /**
+                * Event handler for clicking on button "Connect"
+                */
+                onConnectClick: function ()
+                {
+                    var ws_protocol = document.getElementById("protocol").value;
+                    var ws_hostname = document.getElementById("hostname").value;
+                    var ws_port     = document.getElementById("port").value;
+                    var ws_endpoint = document.getElementById("endpoint").value;
+                    var ws_protocols = document.getElementById("protocols").value;
+
+                    var webSocketURL = ws_protocol + "://" + ws_hostname + ":" + ws_port + ws_endpoint;
+                    if (typeof connectWS == "undefined")
+                         connectWS = BINDING.bind_static_method("[WasmClientWebSocketTest]WasmClientWebSocketTest.Client:OnConnectWebSocket");
+                    
+                    connectWS(document.getElementById("protocol"), document.getElementById("hostname"), document.getElementById("port"), document.getElementById("endpoint"), document.getElementById("protocols")).then(
+                    function (state) {
+                        if (state === "Open")
+                        {
+                            document.getElementById("btnSendText").disabled       = false;
+                            document.getElementById("btnSendBinary").disabled       = false;
+                            document.getElementById("btnConnect").disabled    = true;
+                            document.getElementById("btnDisconnect").disabled = false;                            
+                        }
+                    });
+
+
+                },
+                /**
+                * Event handler for clicking on button "Disconnect"
+                */
+                onDisconnectClick: function ()
+                {
+                   if (typeof disconnect == "undefined")
+                         disconnect = BINDING.bind_static_method("[WasmClientWebSocketTest]WasmClientWebSocketTest.Client:CloseWebSocket");
+                    disconnect("Because dragons breath fire.");
+                },
+                /**
+                * Send a message to the WebSocket server
+                */
+                onSendTextClick: function () {
+                    if (typeof onSend == "undefined")
+                         onSend = BINDING.bind_static_method("[WasmClientWebSocketTest]WasmClientWebSocketTest.Client:SendWebSocketMessage");
+
+                    onSend(document.getElementById("message"), "text");
+                },
+                onSendBinaryClick: function () {
+                    if (typeof onSend == "undefined")
+                         onSend = BINDING.bind_static_method("[WasmClientWebSocketTest]WasmClientWebSocketTest.Client:SendWebSocketMessage");
+
+                    onSend(document.getElementById("message"), "binary");
+                }
+    
+            };</script>
+    
+    </body>
+</html>
