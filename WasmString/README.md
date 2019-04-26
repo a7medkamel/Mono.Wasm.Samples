@@ -38,6 +38,15 @@ The Green buttons use the WebAssembly bindings to marshal data types back and fo
 
 - **Pointer:** creates a string and using a pinned byte array, calls a javascript function with the pointer to the string to be displayed.
 
+   ``` javascript
+
+            onPtrClick: function () {
+                BINDING.call_static_method("[WasmString]WasmString.Program:Ptr", []);
+                console.log("Total Memory: " + Module.HEAPU8.byteLength);
+            },
+
+   ```
+
    ``` csharp
 
         public static void Ptr()
@@ -71,6 +80,15 @@ The Green buttons use the WebAssembly bindings to marshal data types back and fo
 
 - **String:** creates a string calls a javascript function marshalling the string to the function.
 
+   ``` javascript
+   
+            onStringClick: function () {
+                BINDING.call_static_method("[WasmString]WasmString.Program:MarshalString", []);
+                console.log("Total Memory: " + Module.HEAPU8.byteLength);
+            },
+
+   ```
+
    ``` csharp
 
         public static void MarshalString()
@@ -90,6 +108,19 @@ The Green buttons use the WebAssembly bindings to marshal data types back and fo
    ```   
 
 - **Heap Malloc:** allocates memory on wasm heap and passes the pointer to the C# managed.  **Note** the developer is responsible for allocating the wasm heap AND FREEING that memory from javascript.
+
+   ``` javascript
+   
+            onMallocClick: function () {
+                // Warning:  When using the malloc from the javascript side you are resposible
+                // for freeing memory on the javascript side.
+                var ptr = Module._malloc(50000);
+                BINDING.call_static_method("[WasmString]WasmString.Program:Malloc", [ptr]);
+                Module._free(ptr);
+                console.log("Total Memory: " + Module.HEAPU8.byteLength);
+            },
+
+   ```
 
    ``` csharp
 
@@ -113,6 +144,15 @@ The Green buttons use the WebAssembly bindings to marshal data types back and fo
    ```   
 
 - **Uint8Array:** copies the string bytes to a Uint8Array and then calls the javascript function.  **Note** Not necessarily the best way to do this but can be done.  This uses a lot of memory transferring to/from the heap.
+
+   ``` javascript
+
+             onBufferClick: function () {
+                BINDING.call_static_method("[WasmString]WasmString.Program:ByteArray", []);
+                console.log("Total Memory: " + Module.HEAPU8.byteLength);
+            },
+
+   ```
 
    ``` csharp
 
