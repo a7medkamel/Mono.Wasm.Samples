@@ -15,7 +15,7 @@ $(TOP)/mono/:
 
 .stamp-wasm-sdk: | $(TOP)/mono/
 
-	curl -L 'https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/lastSuccessfulBuild/Azure/processDownloadRequest/2703/ubuntu-1804-amd64/sdks/wasm/mono-wasm-d44e45c32ec.zip' -o "mono-wasm.zip" -#
+	curl -L 'https://jenkins.mono-project.com/job/test-mono-mainline-wasm/label=ubuntu-1804-amd64/2704/Azure/processDownloadRequest/2704/ubuntu-1804-amd64/sdks/wasm/mono-wasm-5e2069746c7.zip' -o "mono-wasm.zip" -#
 	unzip mono-wasm.zip -d $(TOP)/mono/sdks
 	touch $@
 
