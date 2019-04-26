@@ -142,7 +142,7 @@
         }
 
         function malloc_alert(length, ptrMessage) {
-            // The ptrMessage is the address of the pinned bytes from the managed side
+            // The ptrMessage is the address of the heap allocated from javascript
             var s = Module.UTF8ToString(ptrMessage, length);
             alert(s);
         }

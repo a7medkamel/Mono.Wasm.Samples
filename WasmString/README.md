@@ -31,3 +31,110 @@ Live test can be found here: https://kjpou1.github.io/wasmstring/
 ## Serving sample
 
 Follow the [sample instructions](https://github.com/mono/mono/blob/master/sdks/wasm/docs/getting-started/sample.md#serving-sample).
+
+## Green buttons
+
+The Green buttons use the WebAssembly bindings to marshal data types back and forth.
+
+- **Pointer:** creates a string and using a pinned byte array, calls a javascript function with the pointer to the string to be displayed.
+
+   ``` csharp
+
+        public static void Ptr()
+        {
+            var helloBuffer = Encoding.UTF8.GetBytes("Hello from Ptr");
+
+            GCHandle gch = GCHandle.Alloc(helloBuffer, GCHandleType.Pinned);
+            var gchAddress = gch.AddrOfPinnedObject();
+
+            try
+            {
+                pointerAlert.Call(null, helloBuffer.Length, gchAddress.ToInt32());
+            }
+            finally
+            {
+                gch.Free();
+            }
+        }
+
+   ```
+
+   ``` javascript
+
+        function pointer_alert(length, ptrMessage) {
+            // The ptrMessage is the address of the pinned bytes from the managed side
+            var s = Module.UTF8ToString(ptrMessage, length);
+            alert(s);
+        }
+
+   ```
+
+- **String:** creates a string calls a javascript function marshalling the string to the function.
+
+   ``` csharp
+
+        public static void MarshalString()
+        {
+            stringAlert.Call(null, "Hello from MarshalString");
+        }
+
+   ```
+
+   ``` javascript
+
+        function string_alert(strMessage) {
+            // The strMessage is the marshalled string value
+            alert(strMessage);
+        }
+
+   ```   
+
+- **Heap Malloc:** allocates memory on wasm heap and passes the pointer to the C# managed.  **Note** the developer is responsible for allocating the wasm heap AND FREEING that memory from javascript.
+
+   ``` csharp
+
+        public static void Malloc(int ptr)
+        {
+            var helloBuffer = Encoding.UTF8.GetBytes("Hic sunt Dracones!!!!");
+            Marshal.Copy(helloBuffer, 0, (IntPtr)ptr, helloBuffer.Length);
+            mallocAlert.Call(null, helloBuffer.Length, ptr);
+        }
+
+   ```
+
+   ``` javascript
+
+        function malloc_alert(length, ptrMessage) {
+            // The ptrMessage is the address of the heap allocated from javascript
+            var s = Module.UTF8ToString(ptrMessage, length);
+            alert(s);
+        }
+
+   ```   
+
+- **Uint8Array:** copies the string bytes to a Uint8Array and then calls the javascript function.  **Note** Not necessarily the best way to do this but can be done.  This uses a lot of memory transferring to/from the heap.
+
+   ``` csharp
+
+        public static void ByteArray ()
+        {
+            var helloBuffer = Encoding.UTF8.GetBytes("Hello from Uint8Array");
+            byteArrayBuffer.CopyFrom(helloBuffer);
+            arrayAlert.Call(null, helloBuffer.Length);
+        }
+
+   ```
+
+   ``` javascript
+
+        function array_alert(length) {
+            var numBytes = length * MyWorkBuffer.BYTES_PER_ELEMENT;
+            var ptr = Module._malloc(numBytes);
+            var heapBytes = new Uint8Array(Module.HEAPU8.buffer, ptr, numBytes);
+            heapBytes.set(new Uint8Array(MyWorkBuffer.buffer, MyWorkBuffer.byteOffset, numBytes));
+            var s = Module.UTF8ToString(ptr, length);
+            Module._free(heapBytes.byteOffset);
+            alert(s);
+        }
+
+   ```      
