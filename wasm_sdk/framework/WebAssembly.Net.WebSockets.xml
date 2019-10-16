@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebAssembly.Net.WebSockets</name>
+    </assembly>
+    <members>
+        <member name="T:WebAssembly.Net.WebSockets.ClientWebSocket">
+            <summary>
+            Provides a client for connecting to WebSocket services.
+            </summary>
+        </member>
+        <member name="M:WebAssembly.Net.WebSockets.ClientWebSocket.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:WebAssembly.Net.WebSockets.ClientWebSocket"/> class.
+            </summary>
+        </member>
+        <member name="P:WebAssembly.Net.WebSockets.ClientWebSocket.State">
+            <summary>
+            Gets the WebSocket state of the <see cref="T:WebAssembly.Net.WebSockets.ClientWebSocket"/> instance.
+            </summary>
+            <value>The state.</value>
+        </member>
+        <member name="P:WebAssembly.Net.WebSockets.ClientWebSocket.CloseStatus">
+            <summary>
+            Gets the reason why the close handshake was initiated on <see cref="T:WebAssembly.Net.WebSockets.ClientWebSocket"/> instance.
+            </summary>
+            <value>The close status.</value>
+        </member>
+        <member name="P:WebAssembly.Net.WebSockets.ClientWebSocket.CloseStatusDescription">
+            <summary>
+            Gets a description of the reason why the <see cref="T:WebAssembly.Net.WebSockets.ClientWebSocket"/> instance was closed.
+            </summary>
+            <value>The close status description.</value>
+        </member>
+        <member name="P:WebAssembly.Net.WebSockets.ClientWebSocket.SubProtocol">
+            <summary>
+            Gets the supported WebSocket sub-protocol for the <see cref="T:WebAssembly.Net.WebSockets.ClientWebSocket"/>s instance.
+            </summary>
+            <value>The sub protocol.</value>
+        </member>
+        <member name="M:WebAssembly.Net.WebSockets.ClientWebSocket.ConnectAsync(System.Uri,System.Threading.CancellationToken)">
+            <summary>
+            Connect to a WebSocket server as an asynchronous operation.
+            </summary>
+            <returns>The async.</returns>
+            <param name="uri">URI.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+        </member>
+        <member name="M:WebAssembly.Net.WebSockets.ClientWebSocket.SendAsync(System.ArraySegment{System.Byte},System.Net.WebSockets.WebSocketMessageType,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Send data on <see cref="T:WebAssembly.Net.WebSockets.ClientWebSocket"/> as an asynchronous operation.
+            </summary>
+            <returns>The async.</returns>
+            <param name="buffer">Buffer.</param>
+            <param name="messageType">Message type.</param>
+            <param name="endOfMessage">If set to <c>true</c> end of message.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+        </member>
+        <member name="M:WebAssembly.Net.WebSockets.ClientWebSocket.ReceiveAsync(System.ArraySegment{System.Byte},System.Threading.CancellationToken)">
+            <summary>
+            Receives data on <see cref="T:WebAssembly.Net.WebSockets.ClientWebSocket"/> as an asynchronous operation.
+            </summary>
+            <returns>The async.</returns>
+            <param name="buffer">Buffer.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+        </member>
+        <member name="M:WebAssembly.Net.WebSockets.ClientWebSocket.Abort">
+            <summary>
+            Aborts the connection and cancels any pending IO operations.
+            </summary>
+        </member>
+    </members>
+</doc>
