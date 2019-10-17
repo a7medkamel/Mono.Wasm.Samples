@@ -57,12 +57,16 @@ let ext = {
 
         global.fetch = function() {
           console.log('fetch:', arguments);
+
+          const fetch = require('node-fetch');
+          fetch.apply(this, arguments);
         };
-        // global.fetch = require('node-fetch');
-        
+
         mono.mono_call_static_method("[WasmRoslyn]WasmRoslyn.Program:Main", [compileLog, outputLog, csharpcode]);
 
-        // mono.mono_call_static_method("[WasmRoslyn]WasmRoslyn.Program:Run", [compileLog, outputLog, csharpcode]);
+        setTimeout(() => {
+          mono.mono_call_static_method("[WasmRoslyn]WasmRoslyn.Program:Run", [compileLog, outputLog, csharpcode]);
+        }, 1000);
       }
     )
   },
