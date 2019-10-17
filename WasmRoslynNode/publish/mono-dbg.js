@@ -12116,7 +12116,7 @@ if (Module['preInit']) {
 
 
   Module["noExitRuntime"] = true;
-
+global.MONO=MONO
 run();
 
 
